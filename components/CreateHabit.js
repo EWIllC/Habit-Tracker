@@ -1,12 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
 import { Text, SafeAreaView, TextInput, StyleSheet, Button } from 'react-native';
 import { useState, useContext } from "react";
-import { HabitsContext } from '../App';
+import { HabitsContext } from "../Context";
 
-export default function CreateHabit({ navigation }) {
+export default function CreateHabit() {
 
   const { habits, setHabits } = useContext(HabitsContext);
-
   const [text, onChangeText] = useState("");
 
   const handlePress = () => {
@@ -16,7 +14,7 @@ export default function CreateHabit({ navigation }) {
       amount: 0,
       limit: 0,
     }
-    setHabits([...habits, habit])
+    setHabits([...habits, habit]);
   }
   return (
     <SafeAreaView>

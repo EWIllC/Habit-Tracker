@@ -1,27 +1,31 @@
 import React from "react"
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { useState, useContext } from "react";
-import { HabitsContext } from "../App";
+import { StyleSheet, View, Button } from 'react-native';
+import { useContext } from "react";
+import { HabitsContext } from "../Context";
 
 export default function Home({ navigation }) {
-  const { habits, setHabits } = useContext(HabitsContext);
+  const { habits } = useContext(HabitsContext);
   const handleClick = () => {
-    console.log(habits);
+    const date = new Date();
+    console.log(date.getDate());
   }
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Button
         title="log"
-        onPress={() => handleClick()} />
+        onPress={() => handleClick()}
+      />
       <Button
         title="Create Habit"
-        onPress={() => navigation.navigate("Create-Habit")} />
+        onPress={() => navigation.navigate("Create-Habit")}
+      />
       {habits.map((elem, i) =>
       <Button
         title={elem.name}
-        onPress={() => navigation.navigate("SingleHabit", {id: elem.id, name: elem.name, amount: elem.amount})}
+        key={elem.id}
+        onPress={() => navigation.navigate("SingleHabit", {id: elem.id, name: elem.name, amount: elem.amount, limit: elem.limit})}
       />)}
     </View>
   );
