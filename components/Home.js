@@ -25,7 +25,7 @@ export default function Home({ navigation }) {
       <Button
         title={elem.name}
         key={elem.id}
-        onPress={() => navigation.navigate("SingleHabit", {id: elem.id, name: elem.name, amount: elem.amount, limit: elem.limit})}
+        onPress={() => navigation.navigate("SingleHabit", {id: elem.id, name: elem.name})}
       />)}
     </View>
   );

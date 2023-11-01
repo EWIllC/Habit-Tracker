@@ -2,7 +2,7 @@ import { Text, SafeAreaView, TextInput, StyleSheet, Button } from 'react-native'
 import { useState, useContext } from "react";
 import { HabitsContext } from "../Context";
 
-export default function CreateHabit() {
+export default function CreateHabit({ navigation }) {
 
   const { habits, setHabits } = useContext(HabitsContext);
   const [text, onChangeText] = useState("");
@@ -15,10 +15,10 @@ export default function CreateHabit() {
       limit: 0,
     }
     setHabits([...habits, habit]);
+    navigation.navigate("Home");
   }
   return (
     <SafeAreaView>
-      <Text>this is the create habit page</Text>
       <TextInput
         style={styles.input}
         onChangeText={onChangeText}

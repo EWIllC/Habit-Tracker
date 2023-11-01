@@ -1,78 +1,47 @@
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, Button } from 'react-native';
 import React, { useContext, useState } from "react";
 import { HabitsContext } from "../Context"
+import SetLimit from "./SetLimit";
+import { handleEdit, handleDelete } from "./functions/functions";
 //track over an amount of days
 
-export default function SingleHabit({ route }) {
+export default function SingleHabit({ navigation, route }) {
 
   const {habits, setHabits} = useContext(HabitsContext);
-  const {id, name, amount, limit} = route.params;
-
-  const [amountText, setAmountText] = useState(amount);
+  const habit = habits.find((elem) => elem.id === route.params.id);
+  const { id, name, amount, limit } = habit;
   const [limitText, setLimitText] = useState(limit);
   const [dropDown, setDropDown] = useState(false);
-
-  const handleDelete = () => {
-    setHabits(habits.filter(habit => habit.id !== id));
-  }
-
-  const handleEdit = (val, type) => {
-    if(type === "amount" && amountText + val >= 0) {
-      setAmountText(amountText + val);
-    }
-    const updated = habits.map((habit, i) => {
-      if(habit.id === id) {
-        let update = {
-          id: habit.id,
-          name: habit.name,
-          amount: type === "amount" && habit.amount + val >= 0 ? habit.amount + val : habit.amount,
-          limit: type === "limit" ? val : habit.limit,
-        }
-        return update;
-      } else {
-        return habit;
-      }
-    })
-    setHabits(updated);
-  }
 
   return (
     <View>
       <Text style={styles.title}>{name}</Text>
-      <Text style={styles.text}> you have had <Text style={{color: amountText <= limitText ?  "#3deb34" : "#f50707"}}>{amountText}</Text> {name}(s) today</Text>
-      <Text style={styles.text}> your goal is less than {limitText}</Text>
+      <Text style={styles.text}> you have had <Text style={{color: amount <= limitText ?  "#3deb34" : "#f50707"}}>{amount}</Text> {name}(s) today</Text>
+      <Text style={styles.text}> your goal is less than {limit}</Text>
       <Button
         type="edit-amount"
         title="+"
-        onPress={() => handleEdit(1, "amount")}
+        onPress={() => handleEdit(1, "amount", habits, setHabits, id)}
       />
       <Button
         type="edit-amount"
         title="-"
-        onPress={() => handleEdit(-1, "amount")}
+        onPress={() => handleEdit(-1, "amount", habits, setHabits, id)}
       />
       <Button
         title="Settings"
         onPress={() => setDropDown(!dropDown)}
       />
       {dropDown ?
-      <View>
-        <Text>Set your daily goal</Text>
-        <TextInput
-          style={styles.input}
-          value={limitText}
-          onChangeText={setLimitText}
-        />
-        <Button
-          title="Submit"
-          onPress={() => handleEdit(limitText, "limit")}
-        />
+      <SafeAreaView>
+        <SetLimit options={{ limitText, setLimitText, habits, setHabits, id }} />
         <Button
           title="Delete this habit"
-          onPress={() => handleDelete()}
+          onPress={() => handleDelete(habits, setHabits, id, navigation)}
         />
-      </View>
-        : <Text></Text>}
+      </SafeAreaView>
+      : <Text></Text>
+      }
     </View>
   )
 }
