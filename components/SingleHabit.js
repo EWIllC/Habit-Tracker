@@ -1,33 +1,53 @@
-import { View, SafeAreaView, Text, StyleSheet, Button } from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, Button, Pressable } from 'react-native';
 import React, { useContext, useState } from "react";
 import { HabitsContext } from "../Context"
 import SetLimit from "./SetLimit";
+import CompMode from './CompMode';
 import { handleEdit, handleDelete } from "./functions/functions";
 //track over an amount of days
 
 export default function SingleHabit({ navigation, route }) {
-
   const {habits, setHabits} = useContext(HabitsContext);
   const habit = habits.find((elem) => elem.id === route.params.id);
   const { id, name, amount, limit } = habit;
   const [limitText, setLimitText] = useState(limit);
   const [dropDown, setDropDown] = useState(false);
+  const [toggleLimit, setToggleLimit] = useState(limit > 0);
+
+  const colorSwitch = () => {
+    if(amount <= limit || !toggleLimit) {
+      return  "#3deb34";
+    } else {
+      return "#f50707";
+    }
+  }
 
   return (
     <View>
       <Text style={styles.title}>{name}</Text>
-      <Text style={styles.text}> you have had <Text style={{color: amount <= limitText ?  "#3deb34" : "#f50707"}}>{amount}</Text> {name}(s) today</Text>
-      <Text style={styles.text}> your goal is less than {limit}</Text>
-      <Button
-        type="edit-amount"
-        title="+"
-        onPress={() => handleEdit(1, "amount", habits, setHabits, id)}
-      />
-      <Button
-        type="edit-amount"
-        title="-"
-        onPress={() => handleEdit(-1, "amount", habits, setHabits, id)}
-      />
+      {toggleLimit ?
+        <Text style={styles.textLimit}> your goal is less than {limit}</Text>
+        :
+        <Text></Text>
+      }
+      <Text style={styles.textAmount}> {name}(s) today:
+        <Text style={{color: colorSwitch(), fontSize: 120}}>{amount < 10 ? "0" + amount : amount}
+        </Text>
+      </Text>
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={styles.minButton}
+          onPress={() => handleEdit(-1, "amount", habits, setHabits, id)}
+        >
+          <Text style={styles.minButtonInner}>-</Text>
+        </Pressable>
+        <Pressable
+          style={styles.plusButton}
+          onPress={() => handleEdit(1, "amount", habits, setHabits, id)}
+        >
+          <Text style={styles.plusButtonInner}>+</Text>
+        </Pressable>
+      </View>
       <Button
         title="Settings"
         onPress={() => setDropDown(!dropDown)}
@@ -36,11 +56,16 @@ export default function SingleHabit({ navigation, route }) {
       <SafeAreaView>
         <SetLimit options={{ limitText, setLimitText, habits, setHabits, id }} />
         <Button
+          title={"toggle daily goal"}
+          onPress={() => setToggleLimit(!toggleLimit)}
+        />
+        <Button
           title="Delete this habit"
           onPress={() => handleDelete(habits, setHabits, id, navigation)}
         />
       </SafeAreaView>
-      : <Text></Text>
+      :
+      <Text></Text>
       }
     </View>
   )
@@ -48,10 +73,19 @@ export default function SingleHabit({ navigation, route }) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 50,
+    fontSize: 65,
+    paddingTop: 22,
+    paddingLeft: 12
   },
-  text: {
+  textLimit: {
     fontSize: 20,
+    paddingLeft: 12
+  },
+  textAmount: {
+    fontSize: 20,
+    paddingTop: 0,
+    paddingLeft: 12,
+
   },
   input: {
     height: 40,
@@ -59,5 +93,37 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+  buttonContainer: {
+    paddingTop: 12,
+    flexDirection: "row",
+  },
+  plusButton: {
+    flex:1,
+    height: 55,
+    alignItems:"flex-end",
+    paddingLeft: 170,
+    marginLeft: 10,
+    marginRight: 15,
+    backgroundColor: "blue",
+    borderRadius: 40
+  },
+  plusButtonInner: {
+    color: "white",
+    paddingRight: 138,
+    fontSize: 40,
+  },
+  minButton:{
+    flex:1,
+    alignItems:"flex-start",
+    marginLeft: 15,
+    marginRight: 0,
+    backgroundColor: "blue",
+    borderRadius: 40
+  },
+  minButtonInner: {
+    color: "white",
+    paddingLeft: 33,
+    fontSize: 40
+  }
 })
 

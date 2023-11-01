@@ -1,25 +1,9 @@
 import { Text, TextInput, Button, StyleSheet, SafeAreaView } from "react-native";
+import { handleEdit } from "./functions/functions";
 
 export default function SetLimit({ options }) {
-
   const { limitText, setLimitText, habits, setHabits, id } = options;
 
-  const handleEdit = (val, type) => {
-    const updated = habits.map((habit, i) => {
-      if(habit.id === id) {
-        let update = {
-          id: habit.id,
-          name: habit.name,
-          amount: type === "amount" && habit.amount + val >= 0 ? habit.amount + val : habit.amount,
-          limit: type === "limit" ? val : habit.limit,
-        }
-        return update;
-      } else {
-        return habit;
-      }
-    })
-    setHabits(updated);
-  }
   return (
     <SafeAreaView>
       <TextInput
@@ -29,7 +13,7 @@ export default function SetLimit({ options }) {
       />
       <Button
         title="Submit"
-        onPress={() => handleEdit(limitText, "limit")}
+        onPress={() => handleEdit(limitText, "limit", habits, setHabits, id)}
       />
     </SafeAreaView>
   )

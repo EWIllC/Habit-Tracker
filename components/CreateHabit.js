@@ -3,31 +3,55 @@ import { useState, useContext } from "react";
 import { HabitsContext } from "../Context";
 
 export default function CreateHabit({ navigation }) {
-
   const { habits, setHabits } = useContext(HabitsContext);
   const [text, onChangeText] = useState("");
+  const [limitText, setLimitText] = useState(0);
+  const [nameConfirm, setNameConfirm] = useState(false);
 
   const handlePress = () => {
-    const habit = {
-      id: habits.length + 1,
-      name: text,
-      amount: 0,
-      limit: 0,
+    if(nameConfirm) {
+      const habit = {
+        id: habits.length + 1,
+        name: text,
+        amount: 0,
+        limit: limitText,
+      };
+      setHabits([...habits, habit]);
+      setNameConfirm(!nameConfirm);
+      navigation.navigate("Home");
+    } else {
+      setNameConfirm(!nameConfirm);
     }
-    setHabits([...habits, habit]);
-    navigation.navigate("Home");
   }
   return (
     <SafeAreaView>
+      <Text>Enter the name of your Habit</Text>
       <TextInput
         style={styles.input}
         onChangeText={onChangeText}
         value={text}
       />
-      <Button
-        title="Submit"
-        onPress={() => handlePress()}
-      />
+      {!nameConfirm ?
+      <SafeAreaView>
+        <Button
+          title="Submit"
+          onPress={() => handlePress()}
+        />
+      </SafeAreaView>
+      :
+      <SafeAreaView>
+         <Text>Would you like to enter a daily goal? Otherwise just press submit</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={setLimitText}
+          value={limitText}
+        />
+        <Button
+          title="Submit"
+          onPress={() => handlePress()}
+        />
+      </SafeAreaView>
+      }
     </SafeAreaView>
   )
 }
